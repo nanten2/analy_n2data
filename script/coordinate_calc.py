@@ -13,13 +13,11 @@ height = 4863.85
 nanten2 = EarthLocation(lat = latitude*u.deg, lon = longitude*u.deg, height = height*u.m)
 
 #path
-hosei = "/home/amigos/ros/src/necst/lib/hosei_230.txt"
-#hosei = "./hosei_copy.txt"
 
 def __e(dt):
     return dt.strftime("%Y-%m-%d %H:%M:%S.%f")
 
-def fk5_from_altaz(az, el, obstime):
+def fk5_from_altaz(az, el, obstime, hosei):
     #type check
     #obstime unix time    
     #note

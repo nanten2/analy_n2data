@@ -8,6 +8,8 @@ from joblib import Parallel, delayed
 import coordinate_calc
 from datetime import datetime
 from tqdm import tqdm
+import os
+import sys
 
 ###
 def log(log):
@@ -16,16 +18,14 @@ def log(log):
 st = time.time()
 
 ###path
-path_to_encoder_db = "/home/amigos/ros/src/necst/scripts/record/otf_20190807_01_antenna_n31.db"
-path_to_xfftsdb = "/home/amigos/ros/src/necst/scripts/record/hdd/otf20190807_n31.n2df"
-
+datadir = sys.argv[1]
 #read from DB
-n1 = n2lite.xffts_logger(path_to_encoder_db)
+n1 = n2lite.xffts_logger(os.path.join(datadir, "enc.db"))
 d1 = n1.read("encoder")
 d1[0] = numpy.array(d1[0])
 
 #reado from n2df file
-n2 = n2df.Read(path_to_xfftsdb)
+n2 = n2df.Read(os.path.join(datadir, "xffts.ndf"))
 n2_timestamp = n2.read_timestamp()
 
 log("read_end")
@@ -67,13 +67,13 @@ for i in n2_timestamp:
 
 n_t = n_t[:len(index)]
 
-ret = coordinate_calc.fk5_from_altaz(numpy.array(n_az)/3600, numpy.array(n_el)/3600, n_t)
+ret = coordinate_calc.fk5_from_altaz(numpy.array(n_az)/3600, numpy.array(n_el)/3600, n_t, os.path.join(datadir, "hosei_230.txt"))
 log("coordinate trans end")
 ra = ret[0].deg
 dec = ret[1].deg
 
 log("coordinate calc start")
-ret = coordinate_calc.fk5_from_altaz(Az_list/3600, El_list/3600, time_list)
+ret = coordinate_calc.fk5_from_altaz(Az_list/3600, El_list/3600, time_list, os.path.join(datadir, "hosei_230.txt"))
 log("coordinate calc end")
 
 _ra = ret[0].deg
@@ -83,7 +83,9 @@ log("coordinate trans encoder end")
 
 encoder = [_ra, _dec, time_list]
 xffts_data = [ra,dec,n_t]
-numpy.save("encoder_radec0807", encoder)
-numpy.save("xffts_radec0807", xffts_data)
+
+
+numpy.save(os.path.join(datadir, "encoder_radec"), encoder)
+numpy.save(os.path.join(datadir, "xffts_radec") , xffts_data)
 
 log("end {:.2f}".format(time.time()-st))
