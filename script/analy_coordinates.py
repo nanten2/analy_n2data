@@ -10,6 +10,21 @@ from datetime import datetime
 from tqdm import tqdm
 import os
 import sys
+import argparse
+
+parser = argparse.ArgumentParser(description="***")
+parser.add_argument("arg1")
+parser.add_argument("-p", "--press")
+parser.add_argument("-t", "--temp")
+parser.add_argument("-hu", "--humi")
+parser.add_argument("-l", "--lamda")
+
+args = parser.parse_args()
+print(args)
+humi = float(args.humi)
+lamda = float(args.lamda)
+press = float(args.press)
+temp = float(args.temp)
 
 ###
 def log(log):
@@ -18,7 +33,7 @@ def log(log):
 st = time.time()
 
 ###path
-datadir = sys.argv[1]
+datadir = args.arg1
 #read from DB
 n1 = n2lite.xffts_logger(os.path.join(datadir, "enc.db"))
 d1 = n1.read("encoder")
@@ -67,13 +82,13 @@ for i in n2_timestamp:
 
 n_t = n_t[:len(index)]
 
-ret = coordinate_calc.fk5_from_altaz(numpy.array(n_az)/3600, numpy.array(n_el)/3600, n_t, os.path.join(datadir, "hosei_230.txt"))
+ret = coordinate_calc.fk5_from_altaz(numpy.array(n_az)/3600, numpy.array(n_el)/3600, n_t, os.path.join(datadir, "hosei_230.txt"), press, temp, lamda, humi)
 log("coordinate trans end")
 ra = ret[0].deg
 dec = ret[1].deg
 
 log("coordinate calc start")
-ret = coordinate_calc.fk5_from_altaz(Az_list/3600, El_list/3600, time_list, os.path.join(datadir, "hosei_230.txt"))
+ret = coordinate_calc.fk5_from_altaz(Az_list/3600, El_list/3600, time_list, os.path.join(datadir, "hosei_230.txt"), press, temp, lamda, humi)
 log("coordinate calc end")
 
 _ra = ret[0].deg
