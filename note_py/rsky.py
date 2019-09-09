@@ -1,18 +1,20 @@
 
 # coding: utf-8
 
-# In[34]:
+# In[104]:
 
 
 import sys
 if not sys.argv[1] == "-f":
     path = sys.argv[1]
+    mode = "commandline"
 else:
     # 手動で解析する場合はデータのあるpathを指定してください
-    path = "/home/amigos/data/rsky/20190908_080908/"
+    path = "./"
+    mode = "notebook"
 
 
-# In[35]:
+# In[95]:
 
 
 import n2df
@@ -22,7 +24,7 @@ import os
 import pandas
 
 
-# In[50]:
+# In[96]:
 
 
 n = n2df.Read(path + "xffts.ndf")
@@ -35,7 +37,7 @@ except Exception as e:
     temp = 300
 
 
-# In[51]:
+# In[97]:
 
 
 obs_mode = n.read_obs_mode()
@@ -44,7 +46,7 @@ for i in range(16):
     exec("data_list.append(n.read_onearray({}))".format(i))
 
 
-# In[52]:
+# In[98]:
 
 
 obs_mode = numpy.array(obs_mode)
@@ -52,7 +54,7 @@ sky = obs_mode == "SKY"
 hot = obs_mode == "HOT"
 
 
-# In[53]:
+# In[99]:
 
 
 def get_tsys(dhot, dsky, thot):
@@ -61,7 +63,7 @@ def get_tsys(dhot, dsky, thot):
     return tsys
 
 
-# In[54]:
+# In[103]:
 
 
 tsys_list = []
@@ -69,14 +71,14 @@ sky_list = []
 hot_list = []
 for i in data_list:
     i = numpy.array(i)
-    _sky = sum(i[sky])/len(i[sky])
-    _hot = sum(i[hot])/len(i[hot])
+    _sky = numpy.mean(i[sky], axis=0)
+    _hot = numpy.mean(i[hot], axis=0)
     tsys_list.append(get_tsys(_hot, _sky, temp))
     hot_list.append(_hot)
     sky_list.append(_sky)
 
 
-# In[55]:
+# In[101]:
 
 
 fig = plt.figure(figsize=(16,16))
@@ -101,10 +103,11 @@ for i, (_ax, _tsys) in enumerate(zip(ax, tsys_list)):
     _ax.grid()
 
 
-# In[56]:
+# In[102]:
 
 
 plt.tight_layout()
 plt.savefig(os.path.join(os.path.dirname(path), "result_rsky.png"))
-plt.show()
+if mode == "notebook":
+    plt.show()
 
