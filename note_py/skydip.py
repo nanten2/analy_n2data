@@ -1,18 +1,20 @@
 
 # coding: utf-8
 
-# In[137]:
+# In[145]:
 
 
 import sys
 if not sys.argv[1] == "-f":
     analy_dir = sys.argv[1]
+    mode = "command_line"
 else:
     # 手動で解析する場合はデータのあるpathを指定してください
-    analy_dir = "/home/amigos/data/skydip_xffts/20190907193057/"
+    analy_dir = "./"
+    mode = "notebook"
 
 
-# In[138]:
+# In[146]:
 
 
 import n2df
@@ -22,12 +24,12 @@ import pandas
 import os
 
 
-# In[139]:
+# In[147]:
 
 
-n = n2df.Read(analy_dir + "skydip.ndf")
-if os.path.exists(analy_dir + "weather.csv"):
-    w = pandas.read_csv(analy_dir + "weather.csv")
+n = n2df.Read(os.path.join(analy_dir , "skydip.ndf"))
+if os.path.exists(os.path.join(analy_dir , "weather.csv")):
+    w = pandas.read_csv(os.path.join(analy_dir, "weather.csv"))
     temp = numpy.mean(w["cabin_temp1"])
     temp = temp + 273
 else:
@@ -36,7 +38,7 @@ else:
     temp = 300
 
 
-# In[140]:
+# In[148]:
 
 
 obs_mode = n.read_obs_mode()
@@ -46,14 +48,14 @@ for i in range(16):
 El = n.read_scan_num()
 
 
-# In[128]:
+# In[149]:
 
 
 obs_mode = numpy.array(obs_mode)
 El_list = numpy.array(El)
 
 
-# In[129]:
+# In[150]:
 
 
 hotmask = obs_mode == "HOT"
@@ -61,7 +63,7 @@ skymask = obs_mode == "SKY"
 El = numpy.unique(El_list[skymask])
 
 
-# In[130]:
+# In[151]:
 
 
 data_list = numpy.array(data_list)
@@ -78,7 +80,7 @@ for j in range(16):
     sky_list.append(tmp)
 
 
-# In[131]:
+# In[152]:
 
 
 d_ = []
@@ -97,18 +99,17 @@ for i in range(len(El)):
     secz.append(1/numpy.cos(secz_temp))
 
 
-# In[141]:
+# In[154]:
 
 
 fig = plt.figure(figsize=(16,16))
 ax = [fig.add_subplot(4, 4, i+1) for i in range(16)]
-x = numpy.linspace(0, 2000, 32768)#XFFTS bw = 0-2000MHz
     
 for i, _ax in enumerate(ax):
     f = numpy.polyfit(secz, d_[i], 1)
     _ax.plot(secz, d_[i], "o", label="sky")
     _ax.plot(secz, numpy.poly1d(f)(secz))
-    _ax.set_xlabel('frequency [MHz]')
+    _ax.set_xlabel('secZ')
     _ax.set_ylabel("count")
     _ax.set_yscale("log")
     _ax.set_title('IF : {}'.format(i+1))
@@ -118,5 +119,6 @@ for i, _ax in enumerate(ax):
     
 plt.tight_layout()
 plt.savefig(os.path.join(analy_dir, "result.png"))
-plt.show()
+if mode == "notebook":
+    plt.show()
 
