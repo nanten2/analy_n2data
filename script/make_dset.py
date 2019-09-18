@@ -3,6 +3,9 @@ import numpy
 from tqdm import tqdm
 import os
 
+array_list = ["{:0>2}".format(i) for i in range(1, 17)]
+print(array_list)
+
 def get_index(obsmode, scan_num, lamdel, betdel):
     mask1 = _obsmode == obsmode
     mask2 = _scan_number == scan_num
@@ -20,13 +23,26 @@ def get_index2(obsmode, scan_num):
     mask2 = _scan_number == scan_num
     mask3 = numpy.logical_and(mask1, mask2)
     return mask3
-                                                        
-def get_data(path, array_table):
+
+def getalldata(path):
+    d = []
+    for i in array_list:
+        tmp = get_data2(path, i)
+        d.append(tmp)
+    return d
+
+def get_data2(path, array_num):
+    n = necstdb.opendb(path)
+    nn = n.open_table("xffts_spec_board{}".format(array_num))
+    data = numpy.array(nn.read())
+    return data
+    
+def get_data(path, array_num):
     n = necstdb.opendb(path)
     #print(n.list_tables())
     #nn = n.open_table(array_table)
     ### open file
-    nn = n.open_table("xffts_spec_board01")
+    nn = n.open_table("xffts_spec_board{}".format(array_num))
     dd = n.open_table("obsmode")
     ### read
     data = numpy.array(nn.read())

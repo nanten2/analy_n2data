@@ -29,6 +29,7 @@ def fk5_from_altaz(az, el, obstime, hosei, press, temperature, lamda, humi):
     lamda = lamda*u.um
     ###
     delta = []
+    print(az, el)
     for i in range(len(az)):
         delta.append(kisa_rev.apply_kisa_test(az[i]/3600., el[i]/3600., hosei))
     #for broadcasting
