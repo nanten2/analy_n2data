@@ -27,26 +27,26 @@ import os
 import pandas
 
 
-# In[3]:
+# In[2]:
 
 
 topicname = [
-"xffts_spec_board01",
-"xffts_spec_board02",
-"xffts_spec_board03",
-"xffts_spec_board04",
-"xffts_spec_board05",
-"xffts_spec_board06",
-"xffts_spec_board07",
-"xffts_spec_board08",
-"xffts_spec_board09",
-"xffts_spec_board10",
-"xffts_spec_board11",
-"xffts_spec_board12",
-"xffts_spec_board13",
-"xffts_spec_board14",
-"xffts_spec_board15",
-"xffts_spec_board16"
+"xffts_board01",
+"xffts_board02",
+"xffts_board03",
+"xffts_board04",
+"xffts_board05",
+"xffts_board06",
+"xffts_board07",
+"xffts_board08",
+"xffts_board09",
+"xffts_board10",
+"xffts_board11",
+"xffts_board12",
+"xffts_board13",
+"xffts_board14",
+"xffts_board15",
+"xffts_board16"
 ]
 
 
@@ -90,11 +90,11 @@ for i, (_ax, _tsys) in enumerate(zip(ax, tsys_list)):
     _ax.grid()
 
 
-# In[7]:
+# In[ ]:
 
 
 plt.tight_layout()
-plt.savefig(os.path.join(os.path.dirname(path), "result_rsky.png"))
+plt.savefig(os.path.join(path, "result_rsky.png"))
 if mode == "notebook":
     plt.show()
 
