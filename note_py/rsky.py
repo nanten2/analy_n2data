@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[104]:
+# In[1]:
 
 
 import sys
@@ -10,51 +10,47 @@ if not sys.argv[1] == "-f":
     mode = "commandline"
 else:
     # 手動で解析する場合はデータのあるpathを指定してください
-    path = "./"
+    path = "/home/amigos/hdd/data/rsky/20190913_202905/"
+    path = "/home/amigos/hdd/data/rsky/20190913_213409/"
+    path = "/home/amigos/hdd/data/rsky/20190913_224921/"
+    path = "/home/amigos/hdd/data/rsky/20190913_225213/"
     mode = "notebook"
 
 
-# In[95]:
+# In[2]:
 
 
-import n2df
+import necstdb
 import numpy
 import matplotlib.pyplot as plt
 import os
 import pandas
 
 
-# In[96]:
+# In[3]:
 
 
-n = n2df.Read(path + "xffts.ndf")
-try:
-    w = pandas.read_csv(path + "weather.csv")
-    temp = numpy.mean(w["cabin_temp1"])
-    temp = temp + 273
-except Exception as e:
-    print(e)
-    temp = 300
+topicname = [
+"xffts_spec_board01",
+"xffts_spec_board02",
+"xffts_spec_board03",
+"xffts_spec_board04",
+"xffts_spec_board05",
+"xffts_spec_board06",
+"xffts_spec_board07",
+"xffts_spec_board08",
+"xffts_spec_board09",
+"xffts_spec_board10",
+"xffts_spec_board11",
+"xffts_spec_board12",
+"xffts_spec_board13",
+"xffts_spec_board14",
+"xffts_spec_board15",
+"xffts_spec_board16"
+]
 
 
-# In[97]:
-
-
-obs_mode = n.read_obs_mode()
-data_list = []
-for i in range(16):
-    exec("data_list.append(n.read_onearray({}))".format(i))
-
-
-# In[98]:
-
-
-obs_mode = numpy.array(obs_mode)
-sky = obs_mode == "SKY"
-hot = obs_mode == "HOT"
-
-
-# In[99]:
+# In[4]:
 
 
 def get_tsys(dhot, dsky, thot):
@@ -63,22 +59,13 @@ def get_tsys(dhot, dsky, thot):
     return tsys
 
 
-# In[103]:
+# In[5]:
 
 
-tsys_list = []
-sky_list = []
-hot_list = []
-for i in data_list:
-    i = numpy.array(i)
-    _sky = numpy.mean(i[sky], axis=0)
-    _hot = numpy.mean(i[hot], axis=0)
-    tsys_list.append(get_tsys(_hot, _sky, temp))
-    hot_list.append(_hot)
-    sky_list.append(_sky)
+get_ipython().run_cell_magic('time', '', 'hot_list = []\nsky_list = []\ntsys_list = []\nfor i in topicname:\n    n = necstdb.opendb(path)\n    #print(n.list_tables())\n    nn = n.open_table("obsmode")\n    dd = n.open_table(i)\n    obsmode = numpy.array(nn.read())\n    spec_array = numpy.array(dd.read())\n\n    timestamp = obsmode[:,0]\n    obsmode2 = list(map(lambda x:x.decode(), obsmode[:,1].tolist()))\n\n    obsmode2 = numpy.array(obsmode2)\n    hotmask = obsmode2 == "HOT"\n    skymask = obsmode2 == "SKY"\n\n    array = spec_array.T[2:].T\n    array_timestamp = spec_array.T[1].T\n\n    start_time = timestamp[hotmask][0]\n    end_time = timestamp[hotmask][-1]\n\n    start_time2 = timestamp[skymask][0]\n    end_time2 = timestamp[skymask][-1]\n\n    print(array_timestamp[0])\n    st_index = numpy.where(array_timestamp > float(start_time))[0][0]#分光データのtimstampから切り出す部分の始め\n    end_index = numpy.where(array_timestamp < float(end_time))[0][-1]# 終わり\n    st_index2 = numpy.where(array_timestamp > float(start_time2))[0][0]#分光データのtimstampから切り出す部分の始め\n    end_index2 = numpy.where(array_timestamp < float(end_time2))[0][-1]# 終わり\n\n    tm = array[st_index:end_index]#要注意\u3000切り出しデータ\n    hot = numpy.mean(tm, axis=0)\n    tm2 = array[st_index2:end_index2]#要注意\u3000切り出しデータ\n    sky = numpy.mean(tm2, axis=0)\n    hot_list.append(hot)\n    sky_list.append(sky)\n    tsys_list.append(get_tsys(hot, sky, 300))')
 
 
-# In[101]:
+# In[6]:
 
 
 fig = plt.figure(figsize=(16,16))
@@ -103,7 +90,7 @@ for i, (_ax, _tsys) in enumerate(zip(ax, tsys_list)):
     _ax.grid()
 
 
-# In[102]:
+# In[7]:
 
 
 plt.tight_layout()

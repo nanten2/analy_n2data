@@ -1,9 +1,10 @@
 import numpy
-import n2lite
-import sqlite3
+#import n2lite
+#import sqlite3
+import necstdb
 import matplotlib.pyplot as plt
 import time
-import n2df
+#import n2df
 from joblib import Parallel, delayed
 import coordinate_calc
 from datetime import datetime
@@ -35,14 +36,30 @@ st = time.time()
 ###path
 datadir = args.arg1
 #read from DB
-n1 = n2lite.xffts_logger(os.path.join(datadir, "enc.db"))
-d1 = n1.read("encoder")
-d1[0] = numpy.array(d1[0])
+n = necstdb.opendb(datadir)
+d = n.open_table("status_encoder")
+data = d.read()
+data = numpy.array(data)
+Az = data.T[1]
+El = data.T[2]
+timestamp = data.T[4]
+Az = Az.astype(numpy.float64)
+El = El.astype(numpy.float64)
+timestamp = timestamp.astype(numpy.float64)
+
+#n1 = n2lite.xffts_logger(os.path.join(datadir, "enc.db"))
+#d1 = n1.read("encoder")
+#d1[0] = numpy.array(d1[0])
+
+
 
 #reado from n2df file
-n2 = n2df.Read(os.path.join(datadir, "xffts.ndf"))
-n2_timestamp = n2.read_timestamp()
-
+#n2 = n2df.Read(os.path.join(datadir, "xffts.ndf"))
+#n2_timestamp = n2.read_timestamp()
+d2 = n.open_table("xffts_spec_board01")
+data2 = d2.read()
+timestamp2 = data.T[1]
+n2_timestamp = timestamp.astype(numpy.float64)
 log("read_end")
 
 #azel -->radec
@@ -52,35 +69,38 @@ index = []
 
 for i in range(len(n2_timestamp)):
     try:
-        a = numpy.where(d1[0]>n2_timestamp[i])
+        a = numpy.where(timestamp>n2_timestamp[i])
+        print(a[0])
         index.append(a[0][0])
     except Exception as e:
         print(i, e)
 
 log("indexing end")
 
-Az_list = numpy.array(d1[1])
-diff_Az = Az_list[1:] - Az_list[:-1]
-El_list = numpy.array(d1[2])
-diff_El = El_list[1:] - El_list[:-1]
-time_list = numpy.array(d1[0])
-diff_time = time_list[1:] - time_list[:-1]
+Az_list = Az
+diff_Az = Az[1:] - Az[:-1]
+El_list = El
+diff_El = El[1:] - El[:-1]
+time_list = timestamp
+diff_time = timestamp[1:] - timestamp[:-1]
 
 n_az = []
 n_el = []
+n_t = []
 log("hokan")
 for n,i in enumerate(index):
     try:
         n_az.append((diff_Az[i]/diff_time[i]) * (n2_timestamp[n] - time_list[i-1]) + Az_list[i-1])
         n_el.append((diff_El[i]/diff_time[i]) * (n2_timestamp[n] - time_list[i-1]) + El_list[i-1])
+        n_t.append(n2_timestamp[i])
     except Exception as e:
-        print(i)
+        print(e, i)
         
-n_t = []
-for i in n2_timestamp:
-    n_t.append(i)
+#n_t = []
+#for i in n2_timestamp:
+#    n_t.append(i)
 
-n_t = n_t[:len(index)]
+#n_t = n_t[:len(index)]
 
 ret = coordinate_calc.fk5_from_altaz(numpy.array(n_az)/3600, numpy.array(n_el)/3600, n_t, os.path.join(datadir, "hosei_230.txt"), press, temp, lamda, humi)
 log("coordinate trans end")
