@@ -42,7 +42,7 @@ def get_data(path, array_num):
     #print(n.list_tables())
     #nn = n.open_table(array_table)
     ### open file
-    nn = n.open_table("xffts_spec_board{}".format(array_num))
+    nn = n.open_table("xffts_board{}".format(array_num))
     dd = n.open_table("obsmode")
     ### read
     data = numpy.array(nn.read())
