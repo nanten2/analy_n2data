@@ -33,7 +33,7 @@ def getalldata(path):
 
 def get_data2(path, array_num):
     n = necstdb.opendb(path)
-    nn = n.open_table("xffts_spec_board{}".format(array_num))
+    nn = n.open_table("xffts_board{}".format(array_num))
     data = numpy.array(nn.read())
     return data
     
