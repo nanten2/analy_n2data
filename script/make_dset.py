@@ -67,7 +67,7 @@ def get_data(path, array_num):
     tmpobslist = []
     for j in tqdm(obslist):
         for k in scanlist:
-            if j == "ON":
+            if j == "ON" or j == "OFF":
                 for l in lamdel_list:
                     for m in betdel_list:
                         index = get_index(j, k, l, m)
