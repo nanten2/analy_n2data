@@ -12,9 +12,9 @@ def get_index(obsmode, scan_num, lamdel, betdel):
     mask3 = _lamdel == lamdel
     mask4 = _betdel == betdel
     mm1 = numpy.logical_and(mask3, mask4)
-    #print(mm1)
+    print(mm1)
     mm2 = numpy.logical_and(mask1, mask2)
-    #print(mm2)
+    print(mm2)
     mask5 = numpy.logical_and(mm1, mm2)
     return mask5#, mm1, mm2
 
@@ -53,17 +53,25 @@ def get_data(path, array_num):
     global _lamdel
     global _betdel
     _obs_timestamp =  numpy.array(list(map(lambda x:x.decode(), obsmode.T[0].tolist())))
-    _obsmode = numpy.array(list(map(lambda x:x.decode(), obsmode.T[1].tolist())))
+    _obsmode = numpy.array(list(map(lambda x:x.decode().replace(" ", ""), obsmode.T[1].tolist())))
     _scan_number = numpy.array(list(map(lambda x:x.decode(), obsmode.T[2].tolist())))
     _lamdel =  numpy.array(list(map(lambda x:x.decode(), obsmode.T[3].tolist())))
     _betdel =  numpy.array(list(map(lambda x:x.decode(), obsmode.T[4].tolist())))
+    #_scan_number = obsmode.T[2]
+    #_lamdel = obsmode.T[3]
+    #_betdel = obsmode.T[4]
     array_timestamp = data.T[1].T
     ###共通の要素を削除
     obslist = numpy.unique(_obsmode).tolist()
     scanlist = numpy.unique(_scan_number)
     lamdel_list = numpy.unique(_lamdel)
     betdel_list = numpy.unique(_betdel)
-    obslist.remove("Non")
+    print(lamdel_list)
+    print(betdel_list)
+    try:
+        obslist.remove("Non")
+    except:
+        pass
     tmpobslist = []
     for j in tqdm(obslist):
         for k in scanlist:
