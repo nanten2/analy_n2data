@@ -12,9 +12,9 @@ def get_index(obsmode, scan_num, lamdel, betdel):
     mask3 = _lamdel == lamdel
     mask4 = _betdel == betdel
     mm1 = numpy.logical_and(mask3, mask4)
-    print(mm1)
+    #print(mm1)
     mm2 = numpy.logical_and(mask1, mask2)
-    print(mm2)
+    #print(mm2)
     mask5 = numpy.logical_and(mm1, mm2)
     return mask5#, mm1, mm2
 
@@ -43,9 +43,11 @@ def get_data(path, array_num):
     #nn = n.open_table(array_table)
     ### open file
     nn = n.open_table("xffts_board{}".format(array_num))
+    nn2 = n.open_table("xffts_power_board{}".format(array_num))
     dd = n.open_table("obsmode")
     ### read
     data = numpy.array(nn.read())
+    data2 = numpy.array(nn2.read())
     obsmode = numpy.array(dd.read())
     ###抽出 obsmode
     global _obsmode
@@ -66,8 +68,8 @@ def get_data(path, array_num):
     scanlist = numpy.unique(_scan_number)
     lamdel_list = numpy.unique(_lamdel)
     betdel_list = numpy.unique(_betdel)
-    print(lamdel_list)
-    print(betdel_list)
+    #print(lamdel_list)
+    #print(betdel_list)
     try:
         obslist.remove("Non")
     except:
@@ -97,10 +99,10 @@ def get_data(path, array_num):
     num = len(array_timestamp)
     a = [[0,0,0,0] for i in range(num)]
     for i in tmpobslist:
-        print(i)
+        #print(i)
         start = numpy.where(array_timestamp > float(i[0]))[0][0]
         end = numpy.where(array_timestamp < float(i[1]))[0][-1]
-        print(start, end)
+        #print(start, end)
         for j in range(start, end):
             #print(j)
             a[j][0] = i[2]
@@ -108,4 +110,4 @@ def get_data(path, array_num):
             a[j][2] = i[4]
             a[j][3] = i[5]
     numpy.save(os.path.join(path, "obsmode.npy"), a)
-    return a, data
+    return a, data, data2
