@@ -2,9 +2,12 @@ import necstdb
 import numpy
 from tqdm import tqdm
 import os
+import xarray as xr
+
+__all__ = ["get_data"]
 
 array_list = ["{:0>2}".format(i) for i in range(1, 17)]
-print(array_list)
+#print(array_list)
 
 def get_index(obsmode, scan_num, lamdel, betdel):
     mask1 = _obsmode == obsmode
@@ -109,5 +112,14 @@ def get_data(path, array_num):
             a[j][1] = i[3]
             a[j][2] = i[4]
             a[j][3] = i[5]
-    numpy.save(os.path.join(path, "obsmode.npy"), a)
-    return a, data, data2
+    #numpy.save(os.path.join(path, "obsmode.npy"), a)
+    #d, data, total_p
+    data = numpy.array(data)
+    d = numpy.array(a)
+    xffts_data = data.T[2:].T
+    obs_mode = d.T[0]
+    scan_number = d.T[1]
+    xffts_timestamp = data.T[1].T
+    freq = numpy.arange(32768)*2/32768
+    cube = xr.DataArray(xffts_data, dims=["t", "GHz"], coords={"t":xffts_timestamp, "GHz":freq, "obsmode":("t", obs_mode), "scannum":("t", scan_number)})
+    return cube

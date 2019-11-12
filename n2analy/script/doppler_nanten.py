@@ -14,8 +14,9 @@ import math
 import time
 import sys
 
-class doppler_nanten (object):
+__all__ = ["doppler_nanten"]
 
+class doppler_nanten (object):
 
     #PATH_DEVICE_TABLE = "/home/amigos/NECST/soft/obs/params/device_table.prm"
     #doppler_1p85.py,motor_command.c,motor_server.c,nanten_astro.h,calc_doppler.cpp,
