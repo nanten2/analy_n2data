@@ -1,7 +1,8 @@
-# coding: utf-8
+from .doppler_nanten import *
+from .get_cmdtel import *
+from .make_dset import *
+from .functions import *
+from .const import *
 
-__version__ = "0.0.0"
-
-from .script import *
-
-del script
+del functions
+del const
