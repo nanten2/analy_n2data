@@ -1,0 +1,22 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+ipykernel = "*"
+
+[packages]
+numpy = "*"
+matplotlib = "*"
+pandas = "*"
+astropy = "~=3.2.3"
+tqdm = "*"
+spectral-cube = "*"
+necstdb = "*"
+aplpy = "*"
+xarray = "*"
+joblib = "*"
+
+[requires]
+python_version = "3.7"
