@@ -6,9 +6,6 @@ import xarray as xr
 
 __all__ = ["get_data"]
 
-array_list = ["{:0>2}".format(i) for i in range(1, 17)]
-#print(array_list)
-
 def get_index(obsmode, scan_num, lamdel, betdel):
     mask1 = _obsmode == obsmode
     mask2 = _scan_number == scan_num
@@ -52,6 +49,7 @@ def get_data(path, array_num):
     data = numpy.array(nn.read())
     data2 = numpy.array(nn2.read())
     obsmode = numpy.array(dd.read())
+    print("read end")
     ###抽出 obsmode
     global _obsmode
     global _scan_number
@@ -112,14 +110,15 @@ def get_data(path, array_num):
             a[j][1] = i[3]
             a[j][2] = i[4]
             a[j][3] = i[5]
-    #numpy.save(os.path.join(path, "obsmode.npy"), a)
     #d, data, total_p
     data = numpy.array(data)
     d = numpy.array(a)
     xffts_data = data.T[2:].T
     obs_mode = d.T[0]
     scan_number = d.T[1]
+    lamdel = d.T[2]
+    betdel = d.T[3]
     xffts_timestamp = data.T[1].T
     freq = numpy.arange(32768)*2/32768
-    cube = xr.DataArray(xffts_data, dims=["t", "GHz"], coords={"t":xffts_timestamp, "GHz":freq, "obsmode":("t", obs_mode), "scannum":("t", scan_number)})
+    cube = xr.DataArray(xffts_data, dims=["t", "GHz"], coords={"t":xffts_timestamp, "GHz":freq, "obsmode":("t", obs_mode), "scannum":("t", scan_number), "x":("t", lamdel), "y":("t", betdel)})
     return cube
