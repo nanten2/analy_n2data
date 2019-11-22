@@ -1,7 +1,7 @@
 import numpy as np
 import xarray as xr
 
-__all__ = ["get_maskedcube", "chopper_wheel", "make_grid", "baseline_fitting", "neko"]
+__all__ = ["get_maskedcube", "chopper_wheel", "make_grid", "baseline_fitting"]
 
 def get_maskedcube(cube, obsmode, scan_number):#片方maskにも対応させる
     obsmask = cube["obsmode"] == obsmode
