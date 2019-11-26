@@ -1,5 +1,7 @@
 import numpy
 
+__all__ = ["get_radec"]
+
 def get_radec(path):
     f = open(path)
     d = f.readlines()
