@@ -7,6 +7,8 @@ import sys
 if not sys.argv[1] == "-f":
     path = sys.argv[1]
     mode = "commandline"
+    ind1 = 0#ch
+    ind2 = 32767#ch
 else:
     ind1 = 0#ch
     ind2 = 32767#ch
