@@ -129,7 +129,7 @@ for i, (_ax, _tsys) in enumerate(zip(ax, tsys_list)):
     _ax.set_yscale("log")
     _ax0.set_ylabel('Tsys [K]')
     _ax.set_title('IF : {}'.format(i+1))
-    tsys_av = numpy.mean(_tsys)
+    tsys_av = numpy.mean(_tsys[3000:])
     _ax.text(0.05, 0.05, 'Tsys = %.2f'%(tsys_av), transform=_ax0.transAxes, fontsize=18)
     _ax.set_xlim(0,2000)
     _ax0.set_ylim(0, 1500)
@@ -146,7 +146,7 @@ plt.subplots_adjust(top=0.935)
 if mode == "notebook":
     plt.show()
 else:
-    result_name = os.path.dirname(path)
+    result_name = os.path.basename(os.path.dirname(path))
     plt.savefig("/home/amigos/result/rsky/{}.png".format(result_name))
 
 

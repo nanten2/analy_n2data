@@ -8,14 +8,14 @@ if not sys.argv[1] == "-f":
     mode = "commandline"
 else:
     path = "/home/amigos/hdd/data/observation/rsky/20191113_032816"#例
-    mode = "notebook
-"
+    mode = "notebook"
 #get_ipython().magic('matplotlib inline')
 import numpy as np
 import astropy.io as fits
 import math
 import matplotlib as mpl
 import matplotlib.pylab as plt
+import os
 from scipy.optimize import curve_fit
 
 sys.path.append('/home/amigos/git/analy_n2data')
@@ -234,7 +234,7 @@ for i, _ax in enumerate(ax):
 plt.tight_layout()
 
 if mode == "commandline":
-    result_name = os.path.dir(path)
+    result_name = os.path.basename(os.path.dirname(path))
     plt.savefig("/home/amigos/result/skydip/{}.png".format(result_name))
 else:
     plt.show()
