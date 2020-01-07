@@ -19,17 +19,23 @@ def make_grid(lamda_on, beta_on, N, grid):
     azel_grid = np.meshgrid(azgrid, elgrid)
     return azel_grid
 
-def fitting_func(x, a, b, c, d):
+def fitting_func3(x, a, b, c, d):
      return a*x**3 + b*x**2 + c*x**1 + d
 
-def baseline_fitting(arr_x, arr_y, index1, index2, index3, index4):
+def fitting_func2(x, a, b, c):
+     return a*x**2 + b*x**1 + c
+
+def fitting_func1(x, a, b):
+     return a*x + b
+
+def baseline_fitting(arr_x, arr_y, index1, index2, index3, index4, order=1):
     tmpdata_y1 = arr_y[index1:index2]
     tmpdata_y2 = arr_y[index3:index4]
     tmpdata_x1 = arr_x[index1:index2]
     tmpdata_x2 = arr_x[index3:index4]
     x = np.concatenate([tmpdata_x1, tmpdata_x2])
     y = np.concatenate([tmpdata_y1, tmpdata_y2])
-    param = np.polyfit(x, y, 3)
+    param = np.polyfit(x, y, order)
     arr_y = arr_y - fitting_func(arr_x, *param)
     return arr_y
 
