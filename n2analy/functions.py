@@ -36,6 +36,13 @@ def baseline_fitting(arr_x, arr_y, index1, index2, index3, index4, order=1):
     x = np.concatenate([tmpdata_x1, tmpdata_x2])
     y = np.concatenate([tmpdata_y1, tmpdata_y2])
     param = np.polyfit(x, y, order)
-    arr_y = arr_y - fitting_func(arr_x, *param)
+    if order == 1:
+        arr_y = arr_y - fitting_func1(arr_x, *param)
+    elif order == 2:
+        arr_y = arr_y - fitting_func2(arr_x, *param)
+    elif order == 3:
+        arr_y = arr_y - fitting_func3(arr_x, *param)
+    else:
+        pass
     return arr_y
 
